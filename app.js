@@ -27,9 +27,34 @@ document.addEventListener('DOMContentLoaded', () => {
   initHoursTable();
   initReservation();
   initReveal();
+  initMotion();
 
   document.querySelectorAll('[data-year]').forEach(el => { el.textContent = new Date().getFullYear(); });
 });
+
+// --- Ambient motion ------------------------------------------------------
+
+function initMotion() {
+  const root = document.documentElement;
+  let ticking = false;
+
+  const updateProgress = () => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
+    root.style.setProperty('--scroll-progress', progress.toFixed(4));
+    ticking = false;
+  };
+
+  const onScroll = () => {
+    if (!ticking) {
+      requestAnimationFrame(updateProgress);
+      ticking = true;
+    }
+  };
+
+  updateProgress();
+  window.addEventListener('scroll', onScroll, { passive: true });
+}
 
 // --- Header & navigation --------------------------------------------------
 
